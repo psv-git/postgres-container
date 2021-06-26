@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+
+    mysql_db:
+        image: postgres:alpine
+        container_name: postgres_db
+        command: [ "postgres", "-c", "config_file=/etc/postgresql/postgresql.conf" ]
+        deploy:
+            restart_policy:
+                condition: any
+        networks:
+            - postgres_network
+        expose:
+            - 5432
+        volumes:
+            - ./data:/var/lib/postgresql/data:rw
+            - ./logs:/var/lib/postgresql/logs:rw
+            - ./init:/docker-entrypoint-initdb.d:ro
+            - ./config/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+        environment:
+            POSTGRES_PASSWORD: password
+
+networks:
+    postgres_network:
+        name: postgres_network
+        driver: bridge
